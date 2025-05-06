@@ -26,7 +26,7 @@ int main()
 
     int guess;
     int win = 0;
-    int attempts = 1;
+    int attempts = 0;
     double points = 1000;
 
     srand(time(0));                   // Seed the random number generator with the current time
@@ -59,14 +59,25 @@ int main()
 
     for (int i = 1; i <= max_attempts; i++)
     {
-        printf("Attempt %d of %d\n", i, max_attempts);
+        attempts++;
+        printf("Attempt %d of %d\n", attempts, max_attempts);
 
         printf("Enter your guess no. %d (0-99): ", attempts);
-        scanf("%d", &guess);
+        if (scanf("%d", &guess) != 1)
+        {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n')
+                ;       // Clear input buffer
+            attempts--; // Don't count invalid input as an attempt
+            i--;
+            continue;
+        }
 
         if (guess < 0)
         {
             printf("You entered a negative number, please try again!\n");
+            attempts--;
+            i--;
             continue;
         }
 
@@ -88,10 +99,8 @@ int main()
             printf("Your guess was lower than the secret number!\n");
         }
 
-        attempts++;
-
         double lost_points = abs(guess - secret_number) / 2.0;
-        points = points - lost_points;
+        points -= lost_points;
     }
 
     printf("End of game!\n");
@@ -133,4 +142,6 @@ int main()
         printf("The secret number was %d\n", secret_number);
         printf("Better luck next time!\n");
     }
+
+    return 0;
 }
